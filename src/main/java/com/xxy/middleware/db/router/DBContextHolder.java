@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * 数据源上下文
+ * 本地线程类记录分库、分表的路由结果
  */
 
 public class DBContextHolder {

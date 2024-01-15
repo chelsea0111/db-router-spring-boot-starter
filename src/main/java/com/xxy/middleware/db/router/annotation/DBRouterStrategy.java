@@ -2,8 +2,8 @@ package com.xxy.middleware.db.router.annotation;
 
 import java.lang.annotation.*;
 
-/**
- * 路由策略，分表标记
+/**w
+ * 路由策略，是否分表
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
