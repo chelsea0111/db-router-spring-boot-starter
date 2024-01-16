@@ -1,5 +1,6 @@
 package com.xxy.middleware.db.router.config;
 
+import com.xxy.middleware.db.router.DBRouterConfig;
 import com.xxy.middleware.db.router.dynamic.DynamicDataSource;
 import com.xxy.middleware.db.router.util.PropertyUtil;
 import org.springframework.context.EnvironmentAware;
@@ -40,7 +41,7 @@ public class DataSourceAutoConfig implements EnvironmentAware {
     private String routerKey;
 
     /**
-     * 数据源配置提取
+     * 读取自定义配置，因为使用方在yml里配置多组数据源，这个方法就是为了解析并保存配置信息
      *
      * @param environment
      */
@@ -68,6 +69,12 @@ public class DataSourceAutoConfig implements EnvironmentAware {
         defaultDataSourceConfig = PropertyUtil.handle(environment, prefix + defaultData, Map.class);
     }
 
+    /**
+     * 创建数据源 这样会被Mybatis Spring Boot Starter 中的
+     * SqlSessionFactory sqlSessionFactory(DataSource dataSource) 注入使用
+     *
+     * @return
+     */
     @Bean
     public DataSource dataSource() {
         // 创建数据源
@@ -79,7 +86,7 @@ public class DataSourceAutoConfig implements EnvironmentAware {
                     objMap.get("password").toString()));
         }
 
-        // 设置数据源
+        // 设置并保存数据源
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         dynamicDataSource.setTargetDataSources(targetDataSources);
         dynamicDataSource.setDefaultTargetDataSource(new DriverManagerDataSource(defaultDataSourceConfig.get("url").toString(),
@@ -88,4 +95,15 @@ public class DataSourceAutoConfig implements EnvironmentAware {
 
         return dynamicDataSource;
     }
+
+    /**
+     * 把分库分表配置生成一个 Bean 对象，方便在切面类中进行注入使用
+     * @return
+     */
+    @Bean
+    public DBRouterConfig dbRouterConfig(){
+        return new DBRouterConfig(dbCount,tbCount,routerKey);
+    }
+
+
 }

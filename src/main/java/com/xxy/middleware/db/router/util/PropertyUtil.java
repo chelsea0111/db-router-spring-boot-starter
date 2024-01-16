@@ -59,10 +59,12 @@ public class PropertyUtil {
         try {
             Class<?> binderClass = Class.forName("org.springframework.boot.context.properties.bind.Binder");
             Method getMethod = binderClass.getDeclaredMethod("get", Environment.class);
-            Method bindMethod = binderClass.getDeclaredMethod("bind", String.class, Class.class);
             Object binderObject = getMethod.invoke(null, environment);
+
+            Method bindMethod = binderClass.getDeclaredMethod("bind", String.class, Class.class);
             String prefixParam = prefix.endsWith(".") ? prefix.substring(0, prefix.length() - 1) : prefix;
             Object bindResultObject = bindMethod.invoke(binderObject, prefixParam, targetClass);
+
             Method resultGetMethod = bindResultObject.getClass().getDeclaredMethod("get");
             return resultGetMethod.invoke(bindResultObject);
         } catch (final ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
